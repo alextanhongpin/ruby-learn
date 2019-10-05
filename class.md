@@ -213,5 +213,32 @@ dungeon.go(:east)
 # jane = Person.new("jane", "female", 30)
 # puts "#{john.name} #{john.age}"
 # puts "#{jane.name} #{jane.age}"
+```
 
+## Why module 
+
+Reason is class is too heavy for creating only methods. A class is supposed to have both data and behaviour. If the only thing you care about is behaviour, then ruby suggests to implement it as a module.
+
+With class:
+```ruby
+def Util
+  def self.double(n)
+    n * 2
+  end
+end
+
+Util.double(2) # Class
+```
+
+With module:
+```ruby
+module Util
+  extend self
+  
+  def double(n)
+    n * 2
+  end
+end
+
+Util.double # Module
 ```
