@@ -20,7 +20,7 @@ CMD ["rails", "server", "-b", "0.0.0.0"]
 ```dockerfile
 FROM ruby:2.2.10-alpine
 
-ARG BUILD_PACKAGES="build-base curl-dev git"
+ARG BUILD_PACKAGES="build-base curl-dev git openssl"
 ARG DEV_PACKAGES="postgresql-dev"
 ARG RUBY_PACKAGES="tzdata"
 
