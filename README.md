@@ -14,3 +14,9 @@ Code snippets and best practices when learning Ruby. Never thought I'd learn thi
 - Scopes
 - Table
 - Methods
+
+
+## Installation on MacOS Catalina issue
+```
+SDKROOT="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk" rbenv install 2.6.5
+```
