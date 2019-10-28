@@ -1,67 +1,40 @@
 # Dockerfile
 
 ```dockerfile
-FROM ruby:2.2.10
+FROM ruby:2.6.5-alpine3.10
 
-RUN apt-get update && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-WORKDIR /usr/src/app
-ENV RAILS_ENV=development
-
-COPY Gemfile* ./
-RUN bundle install
-COPY . .
-
-EXPOSE 3000
-CMD ["rails", "server", "-b", "0.0.0.0"]
-```
-
-```dockerfile
-FROM ruby:2.2.10-alpine
-
-ARG BUILD_PACKAGES="build-base curl-dev git openssl"
+# ruby-dev is required by Rails 5.
+ARG BUILD_PACKAGES="ruby-dev build-base curl-dev git openssl bash"
 ARG DEV_PACKAGES="postgresql-dev"
 ARG RUBY_PACKAGES="tzdata"
 
-RUN apk update \
-    && apk upgrade \
-    && apk add --update --no-cache $BUILD_PACKAGES $DEV_PACKAGES $RUBY_PACKAGES
-
-WORKDIR /usr/src/app
-ENV RAILS_ENV=production
-
-COPY Gemfile* ./
-
-RUN bundle config --global frozen 1 && bundle install
-
-COPY . .
-
-EXPOSE 3000
-CMD ["rails", "server", "-b", "0.0.0.0"]
-```
-
-```dockerfile
-FROM ruby:2.6.5-alpine3.10
-
-ARG BUILD_PACKAGES="build-dependencies build-base ruby-dev openssl-dev libxml2-dev libxslt-dev postgresql-dev libc-dev linux-headers nodejs tzdata git"
-
 COPY Gemfile* /app/
+VOLUME /app
 
-RUN apk --update add --virtual $BUILD_PACKAGES && \    
+RUN apk update && apk upgrade 
+RUN apk --update add --virtual $BUILD_PACKAGES $DEV_PACKAGES $RUBY_PACKAGES && \    
     gem install bundler && cd /app && \
-    bundle config build.nokogiri --use-system-libraries && bundle install --without development test
-
+    bundle install
 
 WORKDIR /app
 
 COPY . .
 
-ENV RAILS_ENV=production
-ENV NODE_ENV=production
-
-RUN chown -R nobody:nogroup /app
+RUN chown -R nobody:nogroup /app /etc/pki/tls/certs
 USER nobody
 
-CMD ["rails", "s", "-p", "8080"]
+EXPOSE 3000
+
+# Prefer to run this as a command, in case we need to run sidekiq or something else.
+# CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+# CMD ["bundle", "exec", "sidekiq"]
+# CMD ["rails", "server", "-b", "0.0.0.0", "--port", "3000"]
+```
+
+
+## Possible commands
+```
+$ docker run --env-file=.env.development -p 3000:3000 rails/api:latest
+$ @docker run --env-file=.env.development -p 3000:3000 rails/api:latest rails server -b 0.0.0.0 --port 3000
+$ docker run --env-file .env.development -p 3000:3000 rails-api:latest bundle exec puma -C config/puma.rb -b tcp://0.0.0.0:3000
 ```
