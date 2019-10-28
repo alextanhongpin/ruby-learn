@@ -67,3 +67,23 @@ https://github.com/rails/rails/blob/master/activerecord/lib/active_record/connec
 - timestamp: for storing date and time into a column (timezone dependent)
 - json
 - Jsonb
+
+
+## Database
+
+By default, Rails does not set a timeout on database statements. For example, this will run for a full day, even if your ruby process goes away.
+
+```
+ActiveRecord::Base.connection.execute(<<~SQL)
+  select pg_sleep(86400);
+SQL
+```
+
+The good news is that Rails provides a way to prevent this from happening from the `database.yml` with the statement_timeout variable.
+```
+default: &default
+  adapter: postgresql
+  ...
+  variables:
+    statement_timeout: 5000
+```
