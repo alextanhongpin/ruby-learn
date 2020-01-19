@@ -53,3 +53,48 @@ puts Time.utc(2019).utc?
 t = Time.now
 puts [t.year, t.month, t.day].join('-')
 ```
+
+## Others
+
+```ruby
+require 'date'
+p Time.now
+p Time.new(2019, 1, 31)
+p Time.at(Time.now.to_i)
+
+
+t = Time.now
+p t.day
+p t.month
+p t.year
+p t.hour
+p t.monday?
+p t.sunday?
+p t.friday?
+p t.zone
+p t.utc_offset / 3600
+
+
+# Get current time in UTC.
+
+p Time.now.utc
+
+p t.strftime('%d/%m/%Y') # Month (01..12)
+p t.strftime('%d/%-m/%Y') # Month (1..12)
+p t.strftime('%I:%M %p') # Hour (1..12)
+p t.strftime('%k:%M %p') # Hour (0..23)
+
+p t.to_i
+
+# Add 10 seconds
+p Time.new + 10
+
+# Only in rails.
+# p Time.now - 1.day
+
+
+# Date has no concept of time (hours, minutes...)
+
+# Add 1 day
+p Date.today + 1
+```
